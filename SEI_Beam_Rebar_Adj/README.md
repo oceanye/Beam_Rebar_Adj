@@ -8,7 +8,12 @@ A WPF application for adjusting rebar positions in Tekla Structures models. This
 - Keyboard shortcuts for common operations
 - Adjustable gap and offset parameters
 - Real-time model updates
-- Support for both single rebars and rebar groups
+- Support for single rebars
+- Automatic welding rebar creation
+  - Creates two welding rebars at the connection point
+  - 100mm length for welding rebars
+  - 1x diameter offset from the main rebar
+  - Proper alignment with original rebar direction
 
 ## Requirements
 
@@ -35,9 +40,12 @@ The application relies on the following Tekla Structures assemblies:
 
 1. Launch Tekla Structures
 2. Start this application
-3. Select rebars in the model
-4. Use keyboard shortcuts or UI controls to adjust rebar positions
-5. Apply changes to update the model
+3. Select two rebars in the model
+4. Click to select the connection point
+5. The application will:
+   - Adjust the rebar endpoints to maintain proper spacing
+   - Create welding rebars at the connection point if enabled
+6. Changes are automatically applied to the model
 
 ## Development
 
@@ -48,4 +56,4 @@ This is a WPF application built with:
 
 ## License
 
-Copyright © 2025. All rights reserved.
+Copyright 2025. All rights reserved.

@@ -50,3 +50,4 @@ c:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Release\net48
 c:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Release\net48\SEI_Beam.0EB1F879.Up2Date
 c:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Release\net48\SEI_Beam_Rebar_Adj.exe
 c:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Release\net48\SEI_Beam_Rebar_Adj.pdb
+c:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Release\net48\SEI_Beam_Rebar_Adj.sourcelink.json

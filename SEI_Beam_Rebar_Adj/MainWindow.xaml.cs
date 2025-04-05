@@ -42,6 +42,9 @@ namespace TeklaRebarAdjuster
         // 从界面输入的左右容差值
         private double _offset = 50.0;
 
+        // 水平焊接钢筋间距
+        private const double WELDING_REBAR_SPACING = 200.0;
+
         // 最终用户在 Tekla 中点击选择的目标点
         private Point _selectedPoint = null;
 
@@ -350,22 +353,21 @@ namespace TeklaRebarAdjuster
                 var endpoints = kvp.Value;
 
                 double minDist = double.MaxValue;
-                Point closestPt = null;
+                Point bestPt = null;
 
+                // 找到“最近端点”
                 foreach (var ep in endpoints)
                 {
                     double dist = Distance(ep, targetPoint);
                     if (dist < minDist)
                     {
                         minDist = dist;
-                        closestPt = ep;
+                        bestPt = ep;
                     }
                 }
 
-                if (closestPt != null)
-                {
-                    results.Add((objId, closestPt, minDist));
-                }
+                if (bestPt != null)
+                    results.Add((objId, bestPt, minDist));
             }
 
             results = results.OrderBy(r => r.Distance).ToList();
@@ -461,81 +463,38 @@ namespace TeklaRebarAdjuster
         {
             try
             {
-                // 从界面读取Gap
-                if (!double.TryParse(txtGap.Text, out _gap))
-                {
-                    _gap = 0.0;
-                    LogStatus("输入的间隙值无效，已设为 0。");
-                }
-
-                if (_model == null || _selectedPoint == null)
-                {
-                    LogStatus("数据不完整，无法进行调整。请先选择对象和目标点。");
+                LogStatus("=== 开始调整钢筋 ===");
+                if (!ValidateInputs())
                     return;
-                }
 
-                LogStatus($"开始调整端点，Gap = {_gap:F2} mm");
-                txtStatusBar.Text = "端点调整中...";
+                _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(new TransformationPlane());
 
-                // 1) 找到所有对象到目标点的“最近端点”
-                var allClosest = new List<(int ObjId, Point ClosestEndpoint, double Distance)>();
+                // 调整钢筋端点
+                AdjustRebarEndpoints();
 
-                foreach (var kvp in _objectEndpoints)
+                // 检查焊接钢筋创建条件
+                LogStatus("\n=== 检查焊接钢筋创建条件 ===");
+                LogStatus($"1. 焊接钢筋复选框状态: {(chkAddWeldingRebar.IsChecked == true ? "已选中" : "未选中")}");
+                LogStatus($"2. 间距值: {_gap}mm");
+
+                if (chkAddWeldingRebar.IsChecked == true)
                 {
-                    int objId = kvp.Key;
-                    List<Point> endpoints = kvp.Value;
-
-                    double minDist = double.MaxValue;
-                    Point bestPt = null;
-
-                    // 找到“最近端点”
-                    foreach (var ep in endpoints)
+                    if (_gap > 0)
                     {
-                        double dist = Distance(ep, _selectedPoint);
-                        if (dist < minDist)
-                        {
-                            minDist = dist;
-                            bestPt = ep;
-                        }
+                        LogStatus("✓ 条件满足，开始创建焊接钢筋...");
+                        CreateWeldingRebars();
                     }
-
-                    if (bestPt != null)
-                        allClosest.Add((objId, bestPt, minDist));
-                }
-
-                // 2) 按距离排序
-                allClosest = allClosest.OrderBy(x => x.Distance).ToList();
-
-                // 3) 示例：只移动最近的两个对象，使之产生 gap
-                if (allClosest.Count >= 2)
-                {
-                    var first = allClosest[0]; // 最近
-                    var second = allClosest[1]; // 第二近
-
-                    LogStatus($"最近的两个对象 ID: {first.ObjId}, {second.ObjId}");
-
-                    // 钢筋A 反向移动 halfGap
-                    // (例如 false表示负向)
-                    AdjustObjectEndpoint(first.ObjId, first.ClosestEndpoint, isPositiveDirection: false);
-
-                    // 钢筋B 正向移动 halfGap
-                    AdjustObjectEndpoint(second.ObjId, second.ClosestEndpoint, isPositiveDirection: true);
-                }
-                else if (allClosest.Count == 1)
-                {
-                    // 只有一个对象，就直接移动过去(或只做负向移动)
-                    var single = allClosest[0];
-                    LogStatus($"仅有1个对象 ID={single.ObjId}, 无法形成Gap，只做单个移动。");
-                    AdjustObjectEndpoint(single.ObjId, single.ClosestEndpoint, isPositiveDirection: false);
+                    else
+                    {
+                        LogStatus("✗ 间距必须大于0，无法创建焊接钢筋");
+                    }
                 }
                 else
                 {
-                    LogStatus("找不到任何对象端点，无法执行移动。");
+                    LogStatus("✗ 焊接钢筋复选框未选中，跳过创建");
                 }
 
-                // 4) 提交
-                _model.CommitChanges();
-                LogStatus("端点修改已提交到Tekla模型。");
+                LogStatus("\n=== 操作完成 ===");
 
                 // 复位按钮等UI
                 txtStatusBar.Text = "操作完成";
@@ -547,8 +506,104 @@ namespace TeklaRebarAdjuster
             }
             catch (Exception ex)
             {
-                LogStatus($"调整端点出错: {ex.Message}\n{ex.StackTrace}");
-                txtStatusBar.Text = "发生错误";
+                LogStatus($"错误：{ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        private bool ValidateInputs()
+        {
+            LogStatus("开始验证输入...");
+            if (_selectedRebars.Count == 0)
+            {
+                LogStatus("错误：未选择钢筋");
+                MessageBox.Show("请先选择钢筋！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            if (_selectedPoint == null)
+            {
+                LogStatus("错误：未选择点");
+                MessageBox.Show("请先选择点！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            if (!double.TryParse(txtGap.Text, out _gap))
+            {
+                LogStatus("错误：间距输入无效");
+                MessageBox.Show("请输入有效的间距值！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            if (_gap < 0)
+            {
+                LogStatus("错误：间距不能为负");
+                MessageBox.Show("间距不能为负值！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            LogStatus($"输入验证通过。间距值: {_gap}");
+            return true;
+        }
+
+        private void AdjustRebarEndpoints()
+        {
+            LogStatus($"开始调整端点，Gap = {_gap:F2} mm");
+            txtStatusBar.Text = "端点调整中...";
+
+            // 1) 找到所有对象到目标点的“最近端点”
+            var allClosest = new List<(int ObjId, Point ClosestEndpoint, double Distance)>();
+
+            foreach (var kvp in _objectEndpoints)
+            {
+                int objId = kvp.Key;
+                var endpoints = kvp.Value;
+
+                double minDist = double.MaxValue;
+                Point bestPt = null;
+
+                // 找到“最近端点”
+                foreach (var ep in endpoints)
+                {
+                    double dist = Distance(ep, _selectedPoint);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        bestPt = ep;
+                    }
+                }
+
+                if (bestPt != null)
+                    allClosest.Add((objId, bestPt, minDist));
+            }
+
+            // 2) 按距离排序
+            allClosest = allClosest.OrderBy(x => x.Distance).ToList();
+
+            // 3) 示例：只移动最近的两个对象，使之产生 gap
+            if (allClosest.Count >= 2)
+            {
+                var first = allClosest[0]; // 最近
+                var second = allClosest[1]; // 第二近
+
+                LogStatus($"最近的两个对象 ID: {first.ObjId}, {second.ObjId}");
+
+                // 钢筋A 反向移动 halfGap
+                // (例如 false表示负向)
+                AdjustObjectEndpoint(first.ObjId, first.ClosestEndpoint, isPositiveDirection: false);
+
+                // 钢筋B 正向移动 halfGap
+                AdjustObjectEndpoint(second.ObjId, second.ClosestEndpoint, isPositiveDirection: true);
+            }
+            else if (allClosest.Count == 1)
+            {
+                // 只有一个对象，就直接移动过去(或只做负向移动)
+                var single = allClosest[0];
+                LogStatus($"仅有1个对象 ID={single.ObjId}, 无法形成Gap，只做单个移动。");
+                AdjustObjectEndpoint(single.ObjId, single.ClosestEndpoint, isPositiveDirection: false);
+            }
+            else
+            {
+                LogStatus("找不到任何对象端点，无法执行移动。");
             }
         }
 
@@ -1492,6 +1547,190 @@ namespace TeklaRebarAdjuster
             {
                 LogStatus($"获取构件(ID:{part.Identifier})中心点时出错: {ex.Message}");
                 return null;
+            }
+        }
+
+        private void CreateWeldingRebars()
+        {
+            try
+            {
+                LogStatus("\n=== 开始创建焊接钢筋 ===");
+                Model model = new Model();
+                
+                if (_selectedRebars.Count == 0)
+                {
+                    LogStatus("✗ 错误：未选择钢筋");
+                    return;
+                }
+                
+                // 只处理第一个选中的钢筋
+                var rebar = _selectedRebars[0];
+                LogStatus($"处理钢筋 ID: {rebar.Identifier.ID}");
+                
+                // 检查钢筋类型
+                SingleRebar singleRebar = rebar as SingleRebar;
+                if (singleRebar == null)
+                {
+                    LogStatus("✗ 错误：选中对象不是SingleRebar类型");
+                    return;
+                }
+
+                // 获取钢筋直径
+                string size = "";
+                singleRebar.GetReportProperty("SIZE", ref size);
+                LogStatus($"钢筋尺寸: {size}");
+                
+                // 提取直径数字
+                var match = System.Text.RegularExpressions.Regex.Match(size, @"\d+");
+                if (!match.Success)
+                {
+                    LogStatus($"✗ 错误：无法从尺寸 '{size}' 解析出直径");
+                    return;
+                }
+                
+                double diameter = double.Parse(match.Value);
+                LogStatus($"钢筋直径: {diameter}mm");
+
+                // 获取原钢筋的方向
+                Vector direction = _objectDirections[rebar.Identifier.ID];
+                LogStatus($"钢筋方向: ({direction.X:F2}, {direction.Y:F2}, {direction.Z:F2})");
+                
+                // 计算垂直向量
+                Vector perpendicular = new Vector(0, 1, 0); // 假设Y轴垂直于钢筋
+                if (Math.Abs(direction.Y) > Math.Abs(direction.X)) // 如果钢筋主要沿Y方向，则垂直向量为X轴
+                {
+                    perpendicular = new Vector(1, 0, 0);
+                }
+                
+                // 确保焊接钢筋长度合理
+                double extension = 100; // 减小长度到100mm
+                double offset = diameter; // 偏移距离为1倍钢筋直径
+                LogStatus($"焊接钢筋长度: {extension}mm");
+                LogStatus($"偏移距离: {offset}mm (1倍钢筋直径)");
+                
+                // 1. 创建左侧焊接钢筋
+                SingleRebar leftRebar = new SingleRebar();
+                leftRebar.Size = size;
+                leftRebar.Grade = singleRebar.Grade;
+                leftRebar.Father = singleRebar.Father; // 使用原钢筋的父对象而不是原钢筋本身
+                leftRebar.Name = "WELDING_REBAR";
+                leftRebar.Class = 3;
+                leftRebar.NumberingSeries.StartNumber = 1;
+                leftRebar.NumberingSeries.Prefix = "W";
+                
+                // 向左偏移
+                Point leftCenter = new Point(_selectedPoint);
+                leftCenter.Translate(-perpendicular.X * offset, -perpendicular.Y * offset, -perpendicular.Z * offset);
+                
+                // 创建前后延伸的两个点
+                Point leftStart = new Point(leftCenter);
+                Point leftEnd = new Point(leftCenter);
+                leftStart.Translate(-direction.X * extension/2, -direction.Y * extension/2, -direction.Z * extension/2);
+                leftEnd.Translate(direction.X * extension/2, direction.Y * extension/2, direction.Z * extension/2);
+                
+                LogStatus($"左侧焊接钢筋位置：");
+                LogStatus($"  起点：({leftStart.X:F2}, {leftStart.Y:F2}, {leftStart.Z:F2})");
+                LogStatus($"  终点：({leftEnd.X:F2}, {leftEnd.Y:F2}, {leftEnd.Z:F2})");
+                
+                Polygon leftPolygon = new Polygon();
+                leftPolygon.Points.Add(leftStart);
+                leftPolygon.Points.Add(leftEnd);
+                leftRebar.Polygon = leftPolygon;
+                
+                // 设置钩子和其他属性
+                leftRebar.StartHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                leftRebar.EndHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                leftRebar.OnPlaneOffsets.Add(0.0);
+                leftRebar.FromPlaneOffset = 0.0;
+                leftRebar.StartPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                leftRebar.StartPointOffsetValue = 0;
+                leftRebar.EndPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                leftRebar.EndPointOffsetValue = 0;
+                leftRebar.RadiusValues.Add(0.0);
+                
+                // 插入左侧焊接钢筋
+                bool leftSuccess = leftRebar.Insert();
+                if (!leftSuccess)
+                {
+                    string error = "";
+                    leftRebar.GetReportProperty("ERROR", ref error);
+                    LogStatus($"✗ 左侧焊接钢筋创建失败");
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        LogStatus($"错误详情：{error}");
+                    }
+                }
+                else
+                {
+                    LogStatus("✓ 左侧焊接钢筋创建成功");
+                }
+                
+                // 2. 创建右侧焊接钢筋（与左侧对称）
+                SingleRebar rightRebar = new SingleRebar();
+                rightRebar.Size = size;
+                rightRebar.Grade = singleRebar.Grade;
+                rightRebar.Father = singleRebar.Father; // 使用原钢筋的父对象而不是原钢筋本身
+                rightRebar.Name = "WELDING_REBAR";
+                rightRebar.Class = 3;
+                rightRebar.NumberingSeries.StartNumber = 2;
+                rightRebar.NumberingSeries.Prefix = "W";
+                
+                // 向右偏移
+                Point rightCenter = new Point(_selectedPoint);
+                rightCenter.Translate(perpendicular.X * offset, perpendicular.Y * offset, perpendicular.Z * offset);
+                
+                // 创建前后延伸的两个点
+                Point rightStart = new Point(rightCenter);
+                Point rightEnd = new Point(rightCenter);
+                rightStart.Translate(-direction.X * extension/2, -direction.Y * extension/2, -direction.Z * extension/2);
+                rightEnd.Translate(direction.X * extension/2, direction.Y * extension/2, direction.Z * extension/2);
+                
+                LogStatus($"右侧焊接钢筋位置：");
+                LogStatus($"  起点：({rightStart.X:F2}, {rightStart.Y:F2}, {rightStart.Z:F2})");
+                LogStatus($"  终点：({rightEnd.X:F2}, {rightEnd.Y:F2}, {rightEnd.Z:F2})");
+                
+                Polygon rightPolygon = new Polygon();
+                rightPolygon.Points.Add(rightStart);
+                rightPolygon.Points.Add(rightEnd);
+                rightRebar.Polygon = rightPolygon;
+                
+                // 设置钩子和其他属性
+                rightRebar.StartHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                rightRebar.EndHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                rightRebar.OnPlaneOffsets.Add(0.0);
+                rightRebar.FromPlaneOffset = 0.0;
+                rightRebar.StartPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                rightRebar.StartPointOffsetValue = 0;
+                rightRebar.EndPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                rightRebar.EndPointOffsetValue = 0;
+                rightRebar.RadiusValues.Add(0.0);
+                
+                // 插入右侧焊接钢筋
+                bool rightSuccess = rightRebar.Insert();
+                if (!rightSuccess)
+                {
+                    string error = "";
+                    rightRebar.GetReportProperty("ERROR", ref error);
+                    LogStatus($"✗ 右侧焊接钢筋创建失败");
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        LogStatus($"错误详情：{error}");
+                    }
+                }
+                else
+                {
+                    LogStatus("✓ 右侧焊接钢筋创建成功");
+                }
+                
+                // 提交更改
+                model.CommitChanges();
+                LogStatus("✓ 模型更改已提交");
+                
+                LogStatus("\n=== 焊接钢筋创建完成 ===");
+            }
+            catch (Exception ex)
+            {
+                LogStatus($"✗ 错误：{ex.Message}");
             }
         }
     }

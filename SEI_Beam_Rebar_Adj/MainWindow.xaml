@@ -18,36 +18,40 @@
         </Grid.RowDefinitions>
 
         <!-- 主操作按钮面板 -->
-        <DockPanel Grid.Row="0" LastChildFill="False" Margin="10,5">
-            <!-- 左侧主要操作按钮组 -->
-            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="0,0,10,0">
-                <Button x:Name="btnSelectRebars" Content="选择钢筋" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="0,0,5,0" Padding="10,5" MinWidth="80" Click="BtnSelectRebars_Click"
-                        ToolTip="选择需要调整的钢筋"/>
-                <Button x:Name="btnSelectPoint" Content="选择点 (Space)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="5,0" Padding="10,5" MinWidth="80" Click="BtnSelectPoint_Click" IsEnabled="False"
-                        ToolTip="选择调整的目标点 (快捷键: Space)"/>
-                <Button x:Name="btnAdjustEndpoints" Content="调整端点 (Enter)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="5,0" Padding="10,5" MinWidth="80" Click="BtnAdjustEndpoints_Click" IsEnabled="False"
-                        ToolTip="执行端点调整 (快捷键: Enter)"/>
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,15,0">
+                <Button x:Name="btnSelectRebars" Content="选择钢筋" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="80" Click="BtnSelectRebars_Click"/>
+                <Button x:Name="btnSelectPoint" Content="选择点 (Space)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="80" Margin="5,0" Click="BtnSelectPoint_Click" IsEnabled="False" ToolTip="选择调整的目标点 (快捷键: Space)"/>
             </StackPanel>
-            
-            <!-- 右侧辅助功能按钮组 -->
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="10,0,0,0">
-                <Button x:Name="btnSelectColinear" Content="选择共线钢筋" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="5,0" Padding="10,5" MinWidth="80" Click="BtnSelectColinear_Click"
-                        ToolTip="自动选择所有共线的钢筋"/>
-                <Button x:Name="btnMerge" Content="合并钢筋" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="5,0" Padding="10,5" MinWidth="80" Click="BtnMerge_Click" IsEnabled="False"
-                        ToolTip="合并选中的钢筋"/>
-                <Button x:Name="btnAttachToAssembly" Content="附加到构件" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="5,0" Padding="10,5" MinWidth="80" Click="BtnAttachToAssembly_Click"
-                        ToolTip="将钢筋附加到当前构件" IsEnabled="False" Visibility="Collapsed"/>
-                <Button x:Name="btnReset" Content="重置" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                        Margin="5,0,0,0" Padding="10,5" MinWidth="80" Click="BtnReset_Click"
-                        ToolTip="重置所有选择和设置"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,15,0">
+                <Button x:Name="btnAdjustEndpoints" Content="调整端点 (Enter)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="80" Click="BtnAdjustEndpoints_Click" IsEnabled="False" ToolTip="执行端点调整 (快捷键: Enter)"/>
+                <Button x:Name="btnMerge" Content="合并钢筋" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="80" Margin="5,0" Click="BtnMerge_Click" IsEnabled="False" ToolTip="合并选中的钢筋"/>
             </StackPanel>
-        </DockPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,15,0">
+                <TextBlock Text="过滤规格:" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtFilter" Width="100" Margin="5,0" VerticalContentAlignment="Center" Text="PL8*120"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,15,0">
+                <TextBlock Text="间距：" VerticalAlignment="Center"/>
+                <TextBox x:Name="txtGap" Width="50" Margin="5,0" VerticalContentAlignment="Center" Text="50"/>
+                <TextBlock Text="mm" VerticalAlignment="Center" Margin="5,0"/>
+                <CheckBox x:Name="chkAddWeldingRebar" Content="增加焊接钢筋" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" ToolTip="在间隙处增加水平焊接钢筋"/>
+                <CheckBox x:Name="chkUseRebarGroup" Content="采用钢筋组" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" ToolTip="采用钢筋组"/>
+            </StackPanel>
+
+            <TextBlock Grid.Column="4" Text="（输入正值创建间隙，0表示无间隙）" VerticalAlignment="Center" Foreground="Gray"/>
+        </Grid>
 
         <!-- 参数设置面板 -->
         <Grid Grid.Row="1" Margin="10,0,10,10">
@@ -56,29 +60,18 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,15,0">
-                <TextBlock Text="间隙值:" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtGap" Width="60" Margin="5,0" VerticalContentAlignment="Center" Text="0"/>
-                <TextBlock Text="mm" VerticalAlignment="Center"/>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,15,0">
                 <TextBlock Text="左右容差:" VerticalAlignment="Center"/>
                 <TextBox x:Name="txtOffset" Width="60" Margin="5,0" VerticalContentAlignment="Center" Text="50"/>
                 <TextBlock Text="mm" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,15,0">
-                <TextBlock Text="过滤规格:" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtFilter" Width="100" Margin="5,0" VerticalContentAlignment="Center" Text="PL8*120"/>
-            </StackPanel>
-
-            <TextBlock Grid.Column="3" Text="（输入正值创建间隙，0表示无间隙）" 
-                       VerticalAlignment="Center" Foreground="Gray"/>
+            <Button x:Name="btnSelectColinear" Content="选择共线钢筋" Grid.Column="1" Margin="5,0" Width="100" Click="BtnSelectColinear_Click"/>
+            <Button x:Name="btnAttachToAssembly" Content="附加到构件" Grid.Column="2" Margin="5,0" Width="100" Click="BtnAttachToAssembly_Click" IsEnabled="False"/>
+            <Button x:Name="btnReset" Content="重置" Grid.Column="3" Margin="5,0" Width="80" Click="BtnReset_Click"/>
         </Grid>
 
         <!-- 日志面板 - 替换TextBlock为TextBox以支持复制 -->
