@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEI_Beam_Rebar_Adj", "SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj.csproj", "{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SEI_Rebar_Adj", "SEI_Rebar_Adj\SEI_Rebar_Adj.vdproj", "{D336A590-E9F3-480F-AF02-53C08383DD71}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D336A590-E9F3-480F-AF02-53C08383DD71}.Debug|Any CPU.ActiveCfg = Debug
+		{D336A590-E9F3-480F-AF02-53C08383DD71}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

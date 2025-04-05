@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="Tekla.Common.Geometry">
+      <HintPath>..\..\..\..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Common.Geometry.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures">
+      <HintPath>..\..\..\..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Drawing">
+      <HintPath>..\..\..\..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Model">
+      <HintPath>..\..\..\..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Tekla.Structures.Service">
+      <HintPath>..\..\..\..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Service.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

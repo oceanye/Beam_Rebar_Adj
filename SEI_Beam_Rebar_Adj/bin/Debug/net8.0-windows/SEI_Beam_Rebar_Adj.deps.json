@@ -1,0 +1,329 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "SEI_Beam_Rebar_Adj/1.0.0": {
+        "dependencies": {
+          "Tekla.Common.Geometry": "4.6.0.0",
+          "Tekla.Structures": "2024.0.0.0",
+          "Tekla.Structures.Drawing": "2024.0.0.0",
+          "Tekla.Structures.Model": "2024.0.0.0",
+          "Tekla.Structures.Service": "2024.0.0.0"
+        },
+        "runtime": {
+          "SEI_Beam_Rebar_Adj.dll": {}
+        }
+      },
+      "Tekla.Common.Geometry/4.6.0.0": {
+        "runtime": {
+          "Tekla.Common.Geometry.dll": {
+            "assemblyVersion": "4.6.0.0",
+            "fileVersion": "4.6.0.0"
+          }
+        }
+      },
+      "Tekla.Structures/2024.0.0.0": {
+        "runtime": {
+          "Tekla.Structures.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Tekla.Structures.Drawing/2024.0.0.0": {
+        "runtime": {
+          "Tekla.Structures.Drawing.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Tekla.Structures.Model/2024.0.0.0": {
+        "runtime": {
+          "Tekla.Structures.Model.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Tekla.Structures.Service/2024.0.0.0": {
+        "runtime": {
+          "Tekla.Structures.Service.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Tekla.Common.Geometry.Primitives/4.5.0.0": {
+        "runtime": {
+          "Tekla.Common.Geometry.Primitives.dll": {
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "4.5.0.0"
+          }
+        }
+      },
+      "Trimble.Remoting/1.0.0.0": {
+        "runtime": {
+          "Trimble.Remoting.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.2.0"
+          }
+        }
+      },
+      "DotNetKit/2024.0.0.0": {
+        "runtime": {
+          "DotNetKit.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Tekla.Common.Geometry.Shapes/4.6.2.0": {
+        "runtime": {
+          "Tekla.Common.Geometry.Shapes.dll": {
+            "assemblyVersion": "4.6.2.0",
+            "fileVersion": "4.6.2.0"
+          }
+        }
+      },
+      "Tekla.Structures.Datatype/2024.0.0.0": {
+        "runtime": {
+          "Tekla.Structures.Datatype.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Tekla.Structures.Plugins/2024.0.0.0": {
+        "runtime": {
+          "Tekla.Structures.Plugins.dll": {
+            "assemblyVersion": "2024.0.0.0",
+            "fileVersion": "2024.0.42119.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.0.0": {
+        "runtime": {
+          "Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.3.27908"
+          }
+        }
+      },
+      "Tekla.Technology.Serialization/4.1.0.0": {
+        "runtime": {
+          "Tekla.Technology.Serialization.dll": {
+            "assemblyVersion": "4.1.0.0",
+            "fileVersion": "4.1.1.0"
+          }
+        }
+      },
+      "Trimble.Technology.MsgLib/2.2.0.22326": {
+        "runtime": {
+          "Trimble.Technology.MsgLib.dll": {
+            "assemblyVersion": "2.2.0.22326",
+            "fileVersion": "2.2.0.22326"
+          }
+        }
+      },
+      "Tekla.Environment.Api.Client/1.0.0.0": {
+        "runtime": {
+          "Tekla.Environment.Api.Client.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Tekla.Environment.Api/1.0.0.0": {
+        "runtime": {
+          "Tekla.Environment.Api.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Tekla.Common.Geometry.Algorithms/4.6.2.0": {
+        "runtime": {
+          "Tekla.Common.Geometry.Algorithms.dll": {
+            "assemblyVersion": "4.6.2.0",
+            "fileVersion": "4.6.2.0"
+          }
+        }
+      },
+      "Tekla.Common.Geometry.Topology/4.6.0.0": {
+        "runtime": {
+          "Tekla.Common.Geometry.Topology.dll": {
+            "assemblyVersion": "4.6.0.0",
+            "fileVersion": "4.6.0.0"
+          }
+        }
+      },
+      "Tekla.Technology.Scripting.Plugins/5.5.0.0": {
+        "runtime": {
+          "Tekla.Technology.Scripting.Plugins.dll": {
+            "assemblyVersion": "5.5.0.0",
+            "fileVersion": "5.5.0.0"
+          }
+        }
+      },
+      "Trimble.Package.Manager/1.0.0.0": {
+        "runtime": {
+          "Trimble.Package.Manager.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Trimble.Technology.Rkit/2.2.0.22312": {
+        "runtime": {
+          "Trimble.Technology.Rkit.dll": {
+            "assemblyVersion": "2.2.0.22312",
+            "fileVersion": "2.2.0.22312"
+          }
+        }
+      },
+      "NuGet.Versioning/6.5.0.154": {
+        "runtime": {
+          "NuGet.Versioning.dll": {
+            "assemblyVersion": "6.5.0.154",
+            "fileVersion": "6.5.0.154"
+          }
+        }
+      },
+      "Mono.Cecil/0.11.4.0": {
+        "runtime": {
+          "Mono.Cecil.dll": {
+            "assemblyVersion": "0.11.4.0",
+            "fileVersion": "0.11.4.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SEI_Beam_Rebar_Adj/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Common.Geometry/4.6.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Structures/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Structures.Drawing/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Structures.Model/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Structures.Service/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Common.Geometry.Primitives/4.5.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Trimble.Remoting/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DotNetKit/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Common.Geometry.Shapes/4.6.2.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Structures.Datatype/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Structures.Plugins/2024.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/13.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Technology.Serialization/4.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Trimble.Technology.MsgLib/2.2.0.22326": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Environment.Api.Client/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Environment.Api/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Common.Geometry.Algorithms/4.6.2.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Common.Geometry.Topology/4.6.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Tekla.Technology.Scripting.Plugins/5.5.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Trimble.Package.Manager/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Trimble.Technology.Rkit/2.2.0.22312": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NuGet.Versioning/6.5.0.154": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Mono.Cecil/0.11.4.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

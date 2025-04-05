@@ -1,0 +1,67 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}|SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj|c:\\users\\ye\\source\\repos\\sei_beam_rebar_adj\\sei_beam_rebar_adj\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}|SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj|solutionrelative:sei_beam_rebar_adj\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}|SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj|c:\\users\\ye\\source\\repos\\sei_beam_rebar_adj\\sei_beam_rebar_adj\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}|SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj|solutionrelative:sei_beam_rebar_adj\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}|SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj|c:\\users\\ye\\source\\repos\\sei_beam_rebar_adj\\sei_beam_rebar_adj\\sei_beam_rebar_adj.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{EDD1BC6E-BF35-4116-A26B-70CE6248C0BC}|SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj|solutionrelative:sei_beam_rebar_adj\\sei_beam_rebar_adj.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SEI_Beam_Rebar_Adj",
+              "DocumentMoniker": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj",
+              "RelativeDocumentMoniker": "SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj",
+              "ToolTip": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj",
+              "RelativeToolTip": "SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-03-17T19:25:13.864Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "SEI_Beam_Rebar_Adj\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj\\MainWindow.xaml",
+              "RelativeToolTip": "SEI_Beam_Rebar_Adj\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-03-17T19:15:36.956Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "SEI_Beam_Rebar_Adj\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\Ye\\source\\repos\\SEI_Beam_Rebar_Adj\\SEI_Beam_Rebar_Adj\\MainWindow.xaml.cs",
+              "RelativeToolTip": "SEI_Beam_Rebar_Adj\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAAAI8AAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-17T19:15:36.562Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
