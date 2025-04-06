@@ -50,3 +50,4 @@ C:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Debug\net48\S
 C:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Debug\net48\SEI_Beam_Rebar_Adj.exe
 C:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Debug\net48\SEI_Beam_Rebar_Adj.pdb
 C:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Debug\net48\SEI_Beam_Rebar_Adj_MarkupCompile.lref
+C:\Users\Ye\source\repos\SEI_Beam_Rebar_Adj\SEI_Beam_Rebar_Adj\obj\Debug\net48\SEI_Beam_Rebar_Adj.sourcelink.json

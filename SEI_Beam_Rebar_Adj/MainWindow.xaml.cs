@@ -550,7 +550,7 @@ namespace TeklaRebarAdjuster
             LogStatus($"开始调整端点，Gap = {_gap:F2} mm");
             txtStatusBar.Text = "端点调整中...";
 
-            // 1) 找到所有对象到目标点的“最近端点”
+            // 1) 找到所有对象到目标点的"最近端点"
             var allClosest = new List<(int ObjId, Point ClosestEndpoint, double Distance)>();
 
             foreach (var kvp in _objectEndpoints)
@@ -561,7 +561,7 @@ namespace TeklaRebarAdjuster
                 double minDist = double.MaxValue;
                 Point bestPt = null;
 
-                // 找到“最近端点”
+                // 找到"最近端点"
                 foreach (var ep in endpoints)
                 {
                     double dist = Distance(ep, _selectedPoint);
@@ -587,80 +587,144 @@ namespace TeklaRebarAdjuster
 
                 LogStatus($"最近的两个对象 ID: {first.ObjId}, {second.ObjId}");
 
-                // 钢筋A 反向移动 halfGap
-                // (例如 false表示负向)
-                AdjustObjectEndpoint(first.ObjId, first.ClosestEndpoint, isPositiveDirection: false);
+                // 获取两个钢筋的端点和方向向量
+                var firstEndpoints = _objectEndpoints[first.ObjId];
+                var secondEndpoints = _objectEndpoints[second.ObjId];
+                Vector firstDir = _objectDirections[first.ObjId];
+                Vector secondDir = _objectDirections[second.ObjId];
 
-                // 钢筋B 正向移动 halfGap
-                AdjustObjectEndpoint(second.ObjId, second.ClosestEndpoint, isPositiveDirection: true);
+                LogStatus("=== 移动前端点位置 ===");
+                LogStatus($"钢筋 {first.ObjId} 端点:");
+                LogStatus($"  - 端点[0] = ({firstEndpoints[0].X:F2}, {firstEndpoints[0].Y:F2}, {firstEndpoints[0].Z:F2})");
+                LogStatus($"  - 端点[1] = ({firstEndpoints[1].X:F2}, {firstEndpoints[1].Y:F2}, {firstEndpoints[1].Z:F2})");
+                LogStatus($"钢筋 {second.ObjId} 端点:");
+                LogStatus($"  - 端点[0] = ({secondEndpoints[0].X:F2}, {secondEndpoints[0].Y:F2}, {secondEndpoints[0].Z:F2})");
+                LogStatus($"  - 端点[1] = ({secondEndpoints[1].X:F2}, {secondEndpoints[1].Y:F2}, {secondEndpoints[1].Z:F2})");
+
+                // 计算两根钢筋的中心点
+                Point firstCenter = new Point(
+                    (firstEndpoints[0].X + firstEndpoints[1].X) / 2,
+                    (firstEndpoints[0].Y + firstEndpoints[1].Y) / 2,
+                    (firstEndpoints[0].Z + firstEndpoints[1].Z) / 2
+                );
+                Point secondCenter = new Point(
+                    (secondEndpoints[0].X + secondEndpoints[1].X) / 2,
+                    (secondEndpoints[0].Y + secondEndpoints[1].Y) / 2,
+                    (secondEndpoints[0].Z + secondEndpoints[1].Z) / 2
+                );
+
+                // 计算从选择点到中心点的向量
+                Vector firstToCenter = new Vector(
+                    firstCenter.X - _selectedPoint.X,
+                    firstCenter.Y - _selectedPoint.Y,
+                    firstCenter.Z - _selectedPoint.Z
+                );
+                Vector secondToCenter = new Vector(
+                    secondCenter.X - _selectedPoint.X,
+                    secondCenter.Y - _selectedPoint.Y,
+                    secondCenter.Z - _selectedPoint.Z
+                );
+
+                // 标准化向量
+                double firstLen = Math.Sqrt(firstToCenter.X * firstToCenter.X + firstToCenter.Y * firstToCenter.Y + firstToCenter.Z * firstToCenter.Z);
+                double secondLen = Math.Sqrt(secondToCenter.X * secondToCenter.X + secondToCenter.Y * secondToCenter.Y + secondToCenter.Z * secondToCenter.Z);
+
+                if (firstLen > 0)
+                {
+                    firstToCenter.X /= firstLen;
+                    firstToCenter.Y /= firstLen;
+                    firstToCenter.Z /= firstLen;
+                }
+                if (secondLen > 0)
+                {
+                    secondToCenter.X /= secondLen;
+                    secondToCenter.Y /= secondLen;
+                    secondToCenter.Z /= secondLen;
+                }
+
+                // 1. 先将两个端点都移动到选择点
+                LogStatus("第一步：移动两个端点到选择点");
+                MoveEndpoint(_selectedRebars.First(r => r.Identifier.ID == first.ObjId), first.ClosestEndpoint, _selectedPoint);
+                MoveEndpoint(_selectedRebars.First(r => r.Identifier.ID == second.ObjId), second.ClosestEndpoint, _selectedPoint);
+                UpdateEndpointCache(first.ObjId, first.ClosestEndpoint, _selectedPoint);
+                UpdateEndpointCache(second.ObjId, second.ClosestEndpoint, _selectedPoint);
+
+                // 2. 然后根据中心点方向，将端点向外移动 gap/2
+                LogStatus("第二步：将端点向外移动 gap/2");
+                double halfGap = _gap / 2.0;
+
+                Point firstTarget = new Point(
+                    _selectedPoint.X + halfGap * firstToCenter.X,
+                    _selectedPoint.Y + halfGap * firstToCenter.Y,
+                    _selectedPoint.Z + halfGap * firstToCenter.Z
+                );
+
+                Point secondTarget = new Point(
+                    _selectedPoint.X + halfGap * secondToCenter.X,
+                    _selectedPoint.Y + halfGap * secondToCenter.Y,
+                    _selectedPoint.Z + halfGap * secondToCenter.Z
+                );
+
+                MoveEndpoint(_selectedRebars.First(r => r.Identifier.ID == first.ObjId), _selectedPoint, firstTarget);
+                MoveEndpoint(_selectedRebars.First(r => r.Identifier.ID == second.ObjId), _selectedPoint, secondTarget);
+                UpdateEndpointCache(first.ObjId, _selectedPoint, firstTarget);
+                UpdateEndpointCache(second.ObjId, _selectedPoint, secondTarget);
+
+                LogStatus("=== 移动后端点位置 ===");
+                firstEndpoints = _objectEndpoints[first.ObjId];  // 重新获取更新后的端点
+                secondEndpoints = _objectEndpoints[second.ObjId];
+                LogStatus($"钢筋 {first.ObjId} 端点:");
+                LogStatus($"  - 端点[0] = ({firstEndpoints[0].X:F2}, {firstEndpoints[0].Y:F2}, {firstEndpoints[0].Z:F2})");
+                LogStatus($"  - 端点[1] = ({firstEndpoints[1].X:F2}, {firstEndpoints[1].Y:F2}, {firstEndpoints[1].Z:F2})");
+                LogStatus($"钢筋 {second.ObjId} 端点:");
+                LogStatus($"  - 端点[0] = ({secondEndpoints[0].X:F2}, {secondEndpoints[0].Y:F2}, {secondEndpoints[0].Z:F2})");
+                LogStatus($"  - 端点[1] = ({secondEndpoints[1].X:F2}, {secondEndpoints[1].Y:F2}, {secondEndpoints[1].Z:F2})");
             }
             else if (allClosest.Count == 1)
             {
-                // 只有一个对象，就直接移动过去(或只做负向移动)
+                // 只有一个对象，就移动 gap/2 的距离
                 var single = allClosest[0];
-                LogStatus($"仅有1个对象 ID={single.ObjId}, 无法形成Gap，只做单个移动。");
-                AdjustObjectEndpoint(single.ObjId, single.ClosestEndpoint, isPositiveDirection: false);
-            }
-            else
-            {
-                LogStatus("找不到任何对象端点，无法执行移动。");
+                LogStatus($"仅有1个对象 ID={single.ObjId}, 移动 gap/2 距离。");
+                
+                var endpoints = _objectEndpoints[single.ObjId];
+                LogStatus("=== 移动前端点位置 ===");
+                LogStatus($"钢筋 {single.ObjId} 端点:");
+                LogStatus($"  - 端点[0] = ({endpoints[0].X:F2}, {endpoints[0].Y:F2}, {endpoints[0].Z:F2})");
+                LogStatus($"  - 端点[1] = ({endpoints[1].X:F2}, {endpoints[1].Y:F2}, {endpoints[1].Z:F2})");
+                
+                Vector dir = _objectDirections[single.ObjId];
+                double halfGap = _gap / 2.0;
+                Point target = new Point(
+                    _selectedPoint.X - halfGap * dir.X,
+                    _selectedPoint.Y - halfGap * dir.Y,
+                    _selectedPoint.Z - halfGap * dir.Z
+                );
+                
+                MoveEndpoint(_selectedRebars.First(r => r.Identifier.ID == single.ObjId), single.ClosestEndpoint, target);
+                UpdateEndpointCache(single.ObjId, single.ClosestEndpoint, target);
+                
+                endpoints = _objectEndpoints[single.ObjId];  // 重新获取更新后的端点
+                LogStatus("=== 移动后端点位置 ===");
+                LogStatus($"钢筋 {single.ObjId} 端点:");
+                LogStatus($"  - 端点[0] = ({endpoints[0].X:F2}, {endpoints[0].Y:F2}, {endpoints[0].Z:F2})");
+                LogStatus($"  - 端点[1] = ({endpoints[1].X:F2}, {endpoints[1].Y:F2}, {endpoints[1].Z:F2})");
             }
         }
 
-        /// <summary>
-        /// 调整某对象的端点 oldEndpoint，使之沿自身方向向量±(gap/2)移动，
-        // 并以所选目标点 _selectedPoint 进行投影.
-        /// isPositiveDirection = true表示正向，false表示负向
-        /// </summary>
-        private void AdjustObjectEndpoint(int objId, Point oldEndpoint, bool isPositiveDirection)
+        private void UpdateEndpointCache(int objId, Point oldEndpoint, Point newEndpoint)
         {
-            // 找到对应对象
-            var obj = _selectedRebars.FirstOrDefault(o => o.Identifier.ID == objId);
-            if (obj == null)
+            if (_objectEndpoints.ContainsKey(objId))
             {
-                LogStatus($"在已选对象中未找到ID={objId}，无法移动。");
-                return;
+                var endpoints = _objectEndpoints[objId];
+                for (int i = 0; i < endpoints.Count; i++)
+                {
+                    if (ArePointsEqual(endpoints[i], oldEndpoint))
+                    {
+                        endpoints[i] = newEndpoint;
+                        break;
+                    }
+                }
             }
-
-            // 找到方向向量(单位向量)
-            if (!_objectDirections.ContainsKey(objId))
-            {
-                LogStatus($"对象ID={objId}无方向向量，将直接移动到目标点。");
-                MoveEndpoint(obj, oldEndpoint, _selectedPoint);
-                return;
-            }
-
-            Vector dir = _objectDirections[objId];
-
-            // 计算: oldEndpoint -> _selectedPoint 的向量
-            Vector toTarget = new Vector(
-                _selectedPoint.X - oldEndpoint.X,
-                _selectedPoint.Y - oldEndpoint.Y,
-                _selectedPoint.Z - oldEndpoint.Z
-            );
-
-            // 点积(投影长度)
-            double projectionLen = toTarget.X * dir.X + toTarget.Y * dir.Y + toTarget.Z * dir.Z;
-
-            // 投影点：oldEndpoint + projectionLen * dir
-            Point projected = new Point(
-                oldEndpoint.X + projectionLen * dir.X,
-                oldEndpoint.Y + projectionLen * dir.Y,
-                oldEndpoint.Z + projectionLen * dir.Z
-            );
-
-            // 在投影点的基础上，前/后移 halfGap
-            double halfGap = _gap / 2.0;
-            double sign = isPositiveDirection ? 1.0 : -1.0;
-
-            Point final = new Point(
-                projected.X + sign * halfGap * dir.X,
-                projected.Y + sign * halfGap * dir.Y,
-                projected.Z + sign * halfGap * dir.Z
-            );
-
-            // 调用MoveEndpoint，替换多边形数据并Modify()
-            MoveEndpoint(obj, oldEndpoint, final);
         }
 
         /// <summary>
@@ -1638,13 +1702,13 @@ namespace TeklaRebarAdjuster
                 leftRebar.Polygon = leftPolygon;
                 
                 // 设置钩子和其他属性
-                leftRebar.StartHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
-                leftRebar.EndHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                leftRebar.StartHook.Shape = Tekla.Structures.Model.RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                leftRebar.EndHook.Shape = Tekla.Structures.Model.RebarHookData.RebarHookShapeEnum.NO_HOOK;
                 leftRebar.OnPlaneOffsets.Add(0.0);
                 leftRebar.FromPlaneOffset = 0.0;
-                leftRebar.StartPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                leftRebar.StartPointOffsetType = Tekla.Structures.Model.Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
                 leftRebar.StartPointOffsetValue = 0;
-                leftRebar.EndPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                leftRebar.EndPointOffsetType = Tekla.Structures.Model.Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
                 leftRebar.EndPointOffsetValue = 0;
                 leftRebar.RadiusValues.Add(0.0);
                 
@@ -1695,13 +1759,13 @@ namespace TeklaRebarAdjuster
                 rightRebar.Polygon = rightPolygon;
                 
                 // 设置钩子和其他属性
-                rightRebar.StartHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
-                rightRebar.EndHook.Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                rightRebar.StartHook.Shape = Tekla.Structures.Model.RebarHookData.RebarHookShapeEnum.NO_HOOK;
+                rightRebar.EndHook.Shape = Tekla.Structures.Model.RebarHookData.RebarHookShapeEnum.NO_HOOK;
                 rightRebar.OnPlaneOffsets.Add(0.0);
                 rightRebar.FromPlaneOffset = 0.0;
-                rightRebar.StartPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                rightRebar.StartPointOffsetType = Tekla.Structures.Model.Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
                 rightRebar.StartPointOffsetValue = 0;
-                rightRebar.EndPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                rightRebar.EndPointOffsetType = Tekla.Structures.Model.Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
                 rightRebar.EndPointOffsetValue = 0;
                 rightRebar.RadiusValues.Add(0.0);
                 
