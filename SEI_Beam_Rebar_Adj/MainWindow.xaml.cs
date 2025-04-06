@@ -1719,56 +1719,150 @@ namespace TeklaRebarAdjuster
                     );
                 }
 
-                // 创建两根焊接钢筋
-                for (int i = 0; i < 2; i++)
+                if (chkUseRebarGroup.IsChecked == true)
                 {
-                    SingleRebar weldingRebar = new SingleRebar();
-                    weldingRebar.Father = templateRebar.Father; // 使用相同的父构件
-                    weldingRebar.Class = 3; // Use class 3 for welding rebars
-                    weldingRebar.Size = size;
+                    // --- Create Rebar Group --- 
+                    RebarGroup weldingRebarGroup = new RebarGroup();
+                    weldingRebarGroup.Father = templateRebar.Father; // Use the same parent part
+                    weldingRebarGroup.Class = 3; // Class for welding rebars
+                    weldingRebarGroup.Size = size;
                     string grade = "";
                     templateRebar.GetReportProperty("GRADE", ref grade);
-                    weldingRebar.Grade = grade;
-                    weldingRebar.Name = "WELDING_REBAR";
-                    weldingRebar.NumberingSeries.StartNumber = i + 1;
-                    weldingRebar.NumberingSeries.Prefix = "W";
-
-                    // 计算焊接钢筋的位置
-                    double offset = diameter * (i == 0 ? -1 : 1); // 第一根向左偏移，第二根向右偏移
-                    Point center = new Point(
-                        _selectedPoint.X + perpendicular.X * offset,
-                        _selectedPoint.Y + perpendicular.Y * offset,
-                        _selectedPoint.Z + perpendicular.Z * offset
-                    );
-
-                    // 创建焊接钢筋的多边形
-                    Polygon polygon = new Polygon();
-                    ArrayList points = new ArrayList();
-
-                    // 焊接钢筋的起点和终点
-                    Point startPoint = new Point(
-                        center.X - direction.X * weldingLength / 2,
-                        center.Y - direction.Y * weldingLength / 2,
-                        center.Z - direction.Z * weldingLength / 2
-                    );
-                    Point endPoint = new Point(
-                        center.X + direction.X * weldingLength / 2,
-                        center.Y + direction.Y * weldingLength / 2,
-                        center.Z + direction.Z * weldingLength / 2
-                    );
-
-                    points.Add(startPoint);
-                    points.Add(endPoint);
-                    polygon.Points = points;
-
-                    weldingRebar.Polygon = polygon;
-                    if (weldingRebar.Insert())
+                    if (!string.IsNullOrEmpty(grade))
                     {
-                        LogStatus($"成功创建焊接钢筋 {i + 1}，ID: {weldingRebar.Identifier.ID}");
+                        weldingRebarGroup.Grade = grade;
+                    }
+
+                    ArrayList groupPolygons = new ArrayList();
+
+                    // Calculate and add polygons for both bars to the group
+                    for (int i = 0; i < 2; i++)
+                    {
+                        double offset = diameter * (i == 0 ? -1 : 1); // First bar offset left, second right
+                        Point center = new Point(
+                            _selectedPoint.X + perpendicular.X * offset,
+                            _selectedPoint.Y + perpendicular.Y * offset,
+                            _selectedPoint.Z + perpendicular.Z * offset
+                        );
+
+                        Point startPoint = new Point(
+                            center.X - direction.X * weldingLength / 2,
+                            center.Y - direction.Y * weldingLength / 2,
+                            center.Z - direction.Z * weldingLength / 2
+                        );
+                        Point endPoint = new Point(
+                            center.X + direction.X * weldingLength / 2,
+                            center.Y + direction.Y * weldingLength / 2,
+                            center.Z + direction.Z * weldingLength / 2
+                        );
+
+                        Polygon polygon = new Polygon();
+                        ArrayList points = new ArrayList();
+                        points.Add(startPoint);
+                        points.Add(endPoint);
+                        polygon.Points = points;
+                        groupPolygons.Add(polygon); // Add polygon to the group's list
+                    }
+
+                    weldingRebarGroup.Polygons = groupPolygons;
+
+                    // Set RebarGroup properties following the example
+                    weldingRebarGroup.Father = templateRebar.Father;
+                    weldingRebarGroup.Name = "WELDING_REBAR_GROUP";
+                    weldingRebarGroup.Class = 3;
+                    weldingRebarGroup.Size = size;
+
+                    // Set numbering series
+                    weldingRebarGroup.NumberingSeries.StartNumber = 0;
+                    weldingRebarGroup.NumberingSeries.Prefix = "WG";
+
+                    // Set hooks (no hooks for welding rebars)
+                    weldingRebarGroup.StartHook = new RebarHookData { Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK };
+                    weldingRebarGroup.EndHook = new RebarHookData { Shape = RebarHookData.RebarHookShapeEnum.NO_HOOK };
+
+                    // Set radius values (required for RebarGroup)
+                    weldingRebarGroup.RadiusValues.Add(40.0);
+
+                    // Set spacing type and values (use twice the distance setting)
+                    weldingRebarGroup.SpacingType = RebarGroup.RebarGroupSpacingTypeEnum.SPACING_TYPE_TARGET_SPACE;
+                    double targetSpacing = _gap * 2; // Twice the distance setting
+                    weldingRebarGroup.Spacings.Add(targetSpacing);
+
+                    // Set exclude type
+                    weldingRebarGroup.ExcludeType = RebarGroup.ExcludeTypeEnum.EXCLUDE_TYPE_NONE;
+
+                    // Set offsets (minimal offsets for welding rebars)
+                    weldingRebarGroup.StartPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                    weldingRebarGroup.StartPointOffsetValue = 0;
+                    weldingRebarGroup.EndPointOffsetType = Reinforcement.RebarOffsetTypeEnum.OFFSET_TYPE_COVER_THICKNESS;
+                    weldingRebarGroup.EndPointOffsetValue = 0;
+                    weldingRebarGroup.FromPlaneOffset = 0;
+
+                    if (weldingRebarGroup.Insert())
+                    {
+                        LogStatus($"成功创建焊接钢筋组，ID: {weldingRebarGroup.Identifier.ID}");
                     }
                     else
                     {
-                        LogStatus($"创建焊接钢筋 {i + 1} 失败");
+                        LogStatus("创建焊接钢筋组失败");
+                    }
+                }
+                else
+                {
+                    // --- Create two SingleRebars (existing logic) ---
+                    for (int i = 0; i < 2; i++)
+                    {
+                        SingleRebar weldingRebar = new SingleRebar();
+                        weldingRebar.Father = templateRebar.Father; // Use the same parent part
+                        weldingRebar.Class = 3; // Use class 3 for welding rebars
+                        weldingRebar.Size = size;
+                        string grade = "";
+                        templateRebar.GetReportProperty("GRADE", ref grade);
+                        if (!string.IsNullOrEmpty(grade))
+                        {
+                            weldingRebar.Grade = grade;
+                        }
+
+                        weldingRebar.Name = "WELDING_REBAR";
+                        weldingRebar.NumberingSeries.StartNumber = i + 1;
+                        weldingRebar.NumberingSeries.Prefix = "W"; // Single Rebar Prefix
+
+                        // Calculate welding rebar position
+                        double offset = diameter * (i == 0 ? -1 : 1); // First bar offset left, second right
+                        Point center = new Point(
+                            _selectedPoint.X + perpendicular.X * offset,
+                            _selectedPoint.Y + perpendicular.Y * offset,
+                            _selectedPoint.Z + perpendicular.Z * offset
+                        );
+
+                        // Create polygon for the single rebar
+                        Polygon polygon = new Polygon();
+                        ArrayList points = new ArrayList();
+
+                        Point startPoint = new Point(
+                            center.X - direction.X * weldingLength / 2,
+                            center.Y - direction.Y * weldingLength / 2,
+                            center.Z - direction.Z * weldingLength / 2
+                        );
+                        Point endPoint = new Point(
+                            center.X + direction.X * weldingLength / 2,
+                            center.Y + direction.Y * weldingLength / 2,
+                            center.Z + direction.Z * weldingLength / 2
+                        );
+
+                        points.Add(startPoint);
+                        points.Add(endPoint);
+                        polygon.Points = points;
+
+                        weldingRebar.Polygon = polygon;
+                        if (weldingRebar.Insert())
+                        {
+                            LogStatus($"成功创建焊接钢筋 {i + 1}，ID: {weldingRebar.Identifier.ID}");
+                        }
+                        else
+                        {
+                            LogStatus($"创建焊接钢筋 {i + 1} 失败");
+                        }
                     }
                 }
 
