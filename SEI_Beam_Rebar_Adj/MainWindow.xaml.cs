@@ -1792,7 +1792,7 @@ namespace TeklaRebarAdjuster
                     if (match.Success)
                     {
                         double diameter = double.Parse(match.Value);
-                        txtWeldingLength.Text = (diameter * 10).ToString();
+                        txtWeldingLength.Text = (diameter * 8).ToString();
                         txtGap.Text = diameter.ToString();
                     }
                 }
