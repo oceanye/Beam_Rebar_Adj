@@ -57,3 +57,6 @@ This is a WPF application built with:
 ## License
 
 Copyright 2025. All rights reserved.
+
+## Last Updated
+April 6, 2025

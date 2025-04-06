@@ -47,6 +47,10 @@
                 <TextBox x:Name="txtGap" Width="50" Margin="5,0" VerticalContentAlignment="Center" Text="50"/>
                 <TextBlock Text="mm" VerticalAlignment="Center" Margin="5,0"/>
                 <CheckBox x:Name="chkAddWeldingRebar" Content="增加焊接钢筋" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" ToolTip="在间隙处增加水平焊接钢筋"/>
+                <CheckBox x:Name="chkVerticalWeldingRebar" Content="垂直布置焊接钢筋" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" ToolTip="垂直布置焊接钢筋"/>
+                <TextBlock Text="长度：" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <TextBox x:Name="txtWeldingLength" Width="50" Margin="5,0" VerticalContentAlignment="Center" Text="80"/>
+                <TextBlock Text="mm" VerticalAlignment="Center" Margin="5,0"/>
                 <CheckBox x:Name="chkUseRebarGroup" Content="采用钢筋组" Margin="10,0,0,0" VerticalAlignment="Center" IsChecked="False" ToolTip="采用钢筋组"/>
             </StackPanel>
 
